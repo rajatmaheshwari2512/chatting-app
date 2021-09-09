@@ -7,6 +7,7 @@ const verifyUser = (req, res, next) => {
       if (err) {
         res.status(403).json({ error: "Invalid Token" });
       } else {
+        req.user = resp;
         next();
       }
     });

@@ -11,7 +11,7 @@ router.get("/", (req, res) => {
     .populate("rooms")
     .exec()
     .then((user) => {
-      res.json(user);
+      res.json(user.rooms);
     });
 });
 

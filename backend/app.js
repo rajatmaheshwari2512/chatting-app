@@ -5,7 +5,8 @@ var logger = require("morgan");
 var socketio = require("socket.io");
 const mongoose = require("mongoose");
 
-var messageRouter = require("./routes/messageRouter");
+var roomRouter = require("./routes/roomRouter");
+var usersRouter = require("./routes/userRouter");
 
 var User = require("./models/Users");
 var Room = require("./models/Room");
@@ -36,7 +37,8 @@ mongoose
     console.log(err);
   });
 
-app.use("/messages", messageRouter);
+app.use("/rooms", roomRouter);
+app.use("/users", usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

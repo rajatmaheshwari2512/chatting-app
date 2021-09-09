@@ -6,6 +6,10 @@ var User = new Schema({
     type: String,
     default: "",
   },
+  password: {
+    type: String,
+    required: true,
+  },
   rooms: [
     {
       type: Schema.Types.ObjectId,
