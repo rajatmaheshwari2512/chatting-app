@@ -1,8 +1,10 @@
 var express = require("express");
-const Users = require("../models/Users");
+var uuid4 = require("uuid4");
 var jwt = require("jsonwebtoken");
 
 var verifyUser = require("../auth/verifyUser");
+
+const Users = require("../models/Users");
 const Room = require("../models/Room");
 
 var router = express.Router();
@@ -42,15 +44,22 @@ router
       .exec()
       .then((room) => {
         if (!room) {
+          var roomid = uuid4();
           var newRoom = new Room({
-            roomid: req.body.roomid,
+            roomid: roomid,
+            name: req.body.name,
           });
           newRoom.save().then(() => {
             Users.findOne({ username: req.user.username }).then((user) => {
-              user.rooms.push(req.body.roomid);
-              user.save().then(() => {
-                res.status(200).json({ message: "Room Created and Joined" });
-              });
+              user.rooms.push(roomid);
+              user
+                .save()
+                .then(() => {
+                  res.status(200).json({ message: "Room Created and Joined" });
+                })
+                .catch((err) => {
+                  res.status(500).json({ message: "Error in Joining Room" });
+                });
             });
           });
         }
@@ -58,9 +67,14 @@ router
           .exec()
           .then((user) => {
             user.rooms.push(req.body.roomid);
-            user.save().then(() => {
-              res.status(200).json({ message: "Room Joined" });
-            });
+            user
+              .save()
+              .then(() => {
+                res.status(200).json({ message: "Room Joined" });
+              })
+              .catch((err) => {
+                res.status(500).json({ message: "Error in Joining Room" });
+              });
           });
       });
   });

@@ -59,11 +59,15 @@ app.use(function (err, req, res, next) {
 io.on("connect", (socket) => {
   console.log("Connected");
   socket.on("join", ({ username }) => {
-    var rooms;
+    var rooms = [];
     User.findOne({ username: username })
+      .populate("rooms")
       .exec()
       .then((user) => {
-        rooms = user.rooms;
+        var temp = user.rooms;
+        for (var i = 0; i < temp.length; i++) {
+          rooms.push(temp[i].roomid);
+        }
         socket.join(rooms);
       });
   });

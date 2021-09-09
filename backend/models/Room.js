@@ -6,6 +6,10 @@ var Room = new Schema({
     type: String,
     required: true,
   },
+  name: {
+    type: String,
+    required: true,
+  },
   messages: [
     {
       type: Schema.Types.ObjectId,
