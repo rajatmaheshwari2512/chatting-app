@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { Input, Row, Modal, notification } from "antd";
 import axios from "axios";
@@ -10,11 +10,39 @@ const Sidebar = ({
   setRooms,
   setCurrentRoom,
   setCurrentName,
+  currentRoom,
 }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [roomName, setRoomName] = useState("");
   const history = useHistory();
+  useEffect(() => {
+    if (socket) {
+      socket.on("message", ({ message, username, roomid }) => {
+        var temp = rooms.slice(0);
+        console.log("Inside Socket", currentRoom);
+        for (var i = 0; i < temp.length; i++) {
+          if (temp[i].roomid === roomid && temp[i].roomid !== currentRoom) {
+            temp[i].colour = "#013220";
+            break;
+          }
+        }
+        setRooms(temp);
+      });
+    }
+  }, [socket]);
   const handleClick = (e) => {
+    var temp = rooms.slice(0);
+    console.log("Inside Click", e.target.className.split(" ")[1]);
+    for (var i = 0; i < temp.length; i++) {
+      if (
+        temp[i].roomid === e.target.className.split(" ")[1] &&
+        temp[i].colour
+      ) {
+        temp[i].colour = null;
+        break;
+      }
+    }
+    setRooms(temp);
     setCurrentRoom(e.target.className.split(" ")[1]);
     setCurrentName(e.target.innerText);
   };
@@ -92,6 +120,7 @@ const Sidebar = ({
               className={"room-names " + room.roomid}
               key={room.roomid}
               style={{
+                backgroundColor: room.colour ? room.colour : "black",
                 height: "60px",
                 width: "100%",
                 borderTop: "1px solid gray",

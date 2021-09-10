@@ -8,7 +8,7 @@ const ChatScreen = ({ socket, currentRoom, currentName }) => {
   const history = useHistory();
   const [messages, setMessages] = useState(null);
   const [currentMessage, setCurrentMessage] = useState("");
-  const handleMessage = () => {
+  const handleMessage = (e) => {
     if (currentMessage.length > 0) {
       const username = JSON.parse(localStorage.getItem("user")).username;
       socket.emit("message", { currentMessage, currentRoom, username });
@@ -19,7 +19,9 @@ const ChatScreen = ({ socket, currentRoom, currentName }) => {
     if (socket && messages) {
       socket.on("message", ({ message, username, roomid }) => {
         var temp = messages.slice(0);
-        temp.push({ sent_by: username, content: message });
+        var date = new Date();
+        var time = date.toLocaleTimeString();
+        temp.push({ sent_by: username, content: message, createdAt: time });
         setMessages(temp);
       });
     }
@@ -37,6 +39,11 @@ const ChatScreen = ({ socket, currentRoom, currentName }) => {
           config
         )
         .then((resp) => {
+          for (var i = 0; i < resp.data.length; i++) {
+            resp.data[i].createdAt = new Date(resp.data[i].createdAt);
+            resp.data[i].createdAt =
+              resp.data[i].createdAt.toLocaleTimeString();
+          }
           setMessages(resp.data);
         })
         .catch((err) => {
@@ -55,13 +62,60 @@ const ChatScreen = ({ socket, currentRoom, currentName }) => {
               <b>{currentName}</b>
             </h1>
           </Row>
-          <Row>
+          <Row
+            style={{
+              width: "100%",
+              height: "75vh",
+              overflowY: "scroll",
+              display: "inline-block",
+            }}
+          >
             {messages &&
               messages.map((message) => {
                 return (
-                  <div key={message.createdAt} className="message-container">
-                    <p className="message-sender">{message.sent_by}</p>
-                    <p className="message-text">{message.content}</p>
+                  <div
+                    style={{
+                      border: "1px solid #1c1c1c",
+                      borderRadius: "10px",
+                      marginTop: "4%",
+                      width: "25%",
+                      backgroundColor: "#1c1c1c",
+                    }}
+                    key={message.createdAt}
+                    className="message-container"
+                  >
+                    <p
+                      style={{ paddingLeft: "5%", paddingTop: "3%" }}
+                      className="message-sender"
+                    >
+                      <b>
+                        <u>{message.sent_by}</u>
+                      </b>
+                    </p>
+                    <div style={{ display: "flex" }}>
+                      <p
+                        style={{
+                          float: "left",
+                          width: "50%",
+                          wordWrap: "break-word",
+                          paddingLeft: "5%",
+                        }}
+                        className="message-text"
+                      >
+                        {message.content}
+                      </p>
+                      <p
+                        style={{
+                          float: "right",
+                          width: "50%",
+                          textAlign: "right",
+                          paddingRight: "5%",
+                        }}
+                        className="message-timestamp"
+                      >
+                        {message.createdAt}
+                      </p>
+                    </div>
                   </div>
                 );
               })}
