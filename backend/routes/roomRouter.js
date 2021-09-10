@@ -4,12 +4,12 @@ var router = express.Router();
 var verifyUser = require("../auth/verifyUser");
 const Room = require("../models/Room");
 
-var User = require("../models/Users");
+var User = require("../models/User");
 
 router.use(verifyUser);
 router
   .get("/", (req, res) => {
-    User.findOne({ username: req.user.username })
+    User.findOne({ username: req.user.user.username })
       .populate("rooms")
       .exec()
       .then((user) => {

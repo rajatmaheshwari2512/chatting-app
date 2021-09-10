@@ -4,11 +4,13 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var socketio = require("socket.io");
 const mongoose = require("mongoose");
+var cors = require("cors");
+require("dotenv").config();
 
 var roomRouter = require("./routes/roomRouter");
 var usersRouter = require("./routes/userRouter");
 
-var User = require("./models/Users");
+var User = require("./models/User");
 var Room = require("./models/Room");
 
 var app = express();
@@ -27,6 +29,7 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(cors());
 
 mongoose
   .connect("mongodb://localhost:27017/chatting")
