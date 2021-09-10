@@ -74,19 +74,27 @@ io.on("connect", (socket) => {
         socket.join(rooms);
       });
   });
-  socket.on("message", ({ message, roomid, username }) => {
-    Room.findOne({ roomid: roomid })
+  socket.on("message", ({ currentMessage, currentRoom, username }) => {
+    console.log(currentMessage, currentRoom, username);
+    Room.findOne({ roomid: currentRoom })
       .populate("messages")
       .exec()
       .then((room) => {
         console.log(room.messages);
         room.messages.push({
-          content: message,
+          content: currentMessage,
           sent_by: username,
         });
         room.save();
-        io.to(roomid).emit("message", { message: message, username: username });
+        io.to(currentRoom).emit("message", {
+          message: currentMessage,
+          username: username,
+          roomid: currentRoom,
+        });
       });
+  });
+  socket.on("room", ({ roomid }) => {
+    socket.join(roomid);
   });
 });
 

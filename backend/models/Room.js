@@ -1,6 +1,17 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
+var Message = new Schema({
+  content: {
+    type: String,
+    required: true,
+  },
+  sent_by: {
+    type: String,
+    required: true,
+  },
+});
+
 var Room = new Schema({
   roomid: {
     type: String,
@@ -10,12 +21,7 @@ var Room = new Schema({
     type: String,
     required: true,
   },
-  messages: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Message",
-    },
-  ],
+  messages: [Message],
 });
 
 module.exports = mongoose.model("Room", Room);
