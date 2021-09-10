@@ -45,7 +45,7 @@ const ChatScreen = ({ socket, currentRoom, currentName }) => {
     } else if (!localStorage.getItem("token")) {
       history.push("/");
     }
-  }, [currentRoom]);
+  }, [currentRoom, history]);
   return (
     <>
       {currentRoom && currentName ? (
@@ -59,7 +59,7 @@ const ChatScreen = ({ socket, currentRoom, currentName }) => {
             {messages &&
               messages.map((message) => {
                 return (
-                  <div className="message-container">
+                  <div key={message.createdAt} className="message-container">
                     <p className="message-sender">{message.sent_by}</p>
                     <p className="message-text">{message.content}</p>
                   </div>
@@ -92,7 +92,7 @@ const ChatScreen = ({ socket, currentRoom, currentName }) => {
             marginTop: "10%",
           }}
         >
-          Select a Room to send messages to
+          Select a Room to send messages to, or create a room
         </h1>
       )}
     </>

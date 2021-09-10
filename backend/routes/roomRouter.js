@@ -27,7 +27,6 @@ router
       .populate("messages")
       .exec()
       .then((room) => {
-        console.log(room);
         res.json(room.messages);
       })
       .catch((err) => {

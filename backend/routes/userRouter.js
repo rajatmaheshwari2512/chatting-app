@@ -32,14 +32,15 @@ router
       .then((user) => {
         if (!user) {
           res.status(401).json({ message: "Invalid Credentials" });
+        } else {
+          console.log(user);
+          var token = jwt.sign({ user: user }, process.env.SECRET_KEY, {
+            expiresIn: "365d",
+          });
+          res
+            .status(200)
+            .json({ message: "Login Successful", token: token, user: user });
         }
-        console.log(user);
-        var token = jwt.sign({ user: user }, process.env.SECRET_KEY, {
-          expiresIn: "365d",
-        });
-        res
-          .status(200)
-          .json({ message: "Login Successful", token: token, user: user });
       })
       .catch((err) => {
         console.log(err);
@@ -67,7 +68,10 @@ router
                   .then(() => {
                     res
                       .status(200)
-                      .json({ message: "Room Created and Joined" });
+                      .json({
+                        message: "Room Created and Joined",
+                        room: newRoom,
+                      });
                   })
                   .catch((err) => {
                     res.status(500).json({ message: "Error in Joining Room" });
@@ -87,7 +91,7 @@ router
               user
                 .save()
                 .then(() => {
-                  res.status(200).json({ message: "Room Joined" });
+                  res.status(200).json({ message: "Room Joined", room: room });
                 })
                 .catch((err) => {
                   res.status(500).json({ message: "Error in Finding Room" });

@@ -75,12 +75,10 @@ io.on("connect", (socket) => {
       });
   });
   socket.on("message", ({ currentMessage, currentRoom, username }) => {
-    console.log(currentMessage, currentRoom, username);
     Room.findOne({ roomid: currentRoom })
       .populate("messages")
       .exec()
       .then((room) => {
-        console.log(room.messages);
         room.messages.push({
           content: currentMessage,
           sent_by: username,

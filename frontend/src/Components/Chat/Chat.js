@@ -26,7 +26,7 @@ const Chat = ({ location }) => {
         history.push("/");
       }
     });
-  }, [ENDPOINT, location.search]);
+  }, [location.search, history]);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -41,18 +41,21 @@ const Chat = ({ location }) => {
           setRooms(resp.data);
         })
         .catch((err) => {
+          history.push("/");
           console.log(err);
         });
     } else {
       history.push("/");
     }
-  }, []);
+  }, [history]);
   return (
     <Row>
       <Col xxl={1} xl={1} lg={1} md={1} sm={1} xs={1} />
       <Col xxl={5} xl={5} lg={5} md={5} sm={5} xs={5}>
         <Sidebar
+          socket={socket}
           rooms={rooms}
+          setRooms={setRooms}
           setCurrentRoom={setCurrentRoom}
           setCurrentName={setCurrentName}
         />
