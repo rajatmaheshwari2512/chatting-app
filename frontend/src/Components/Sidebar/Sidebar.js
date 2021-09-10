@@ -18,18 +18,28 @@ const Sidebar = ({
   useEffect(() => {
     if (socket) {
       socket.on("message", ({ message, username, roomid }) => {
-        var temp = rooms.slice(0);
-        console.log("Inside Socket", currentRoom);
-        for (var i = 0; i < temp.length; i++) {
-          if (temp[i].roomid === roomid && temp[i].roomid !== currentRoom) {
-            temp[i].colour = "#013220";
-            break;
+        console.log(currentRoom, roomid);
+        if (currentRoom !== roomid) {
+          var temp = rooms.slice(0);
+          console.log("Inside Socket", currentRoom);
+          for (var i = 0; i < temp.length; i++) {
+            if (temp[i].roomid === roomid && temp[i].roomid !== currentRoom) {
+              temp[i].colour = "#013220";
+              break;
+            }
           }
+          setRooms(temp);
+        } else {
+          var temp = rooms.slice(0);
+          console.log("Inside Socket", currentRoom);
+          for (var i = 0; i < temp.length; i++) {
+            temp[i].colour = "black";
+          }
+          setRooms(temp);
         }
-        setRooms(temp);
       });
     }
-  }, [socket]);
+  }, [socket, currentRoom]);
   const handleClick = (e) => {
     var temp = rooms.slice(0);
     console.log("Inside Click", e.target.className.split(" ")[1]);
