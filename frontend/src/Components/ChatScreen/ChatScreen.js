@@ -61,6 +61,13 @@ const ChatScreen = ({ socket, currentRoom, currentName }) => {
             <h1>
               <b>{currentName}</b>
             </h1>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <h3 style={{ marginTop: "15px" }}>
+              <b>
+                {currentRoom}&nbsp;&nbsp;(Share this roomid to allow users to
+                join this room)
+              </b>
+            </h3>
           </Row>
           <Row
             style={{

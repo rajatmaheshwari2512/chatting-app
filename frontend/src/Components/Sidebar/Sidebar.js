@@ -78,6 +78,7 @@ const Sidebar = ({
         .catch((err) => {
           console.log(err);
         });
+      setRoomName("");
       setIsModalVisible(false);
     } else {
       history.push("/");
@@ -104,11 +105,20 @@ const Sidebar = ({
           var temp = rooms.slice(0);
           temp.push(resp.data.room);
           setRooms(temp);
+          notification.success({
+            message: "Success",
+            description: "Room Joined Successfully",
+          });
           socket.emit("room", { roomid: resp.data.room.roomid });
         })
         .catch((err) => {
           console.log(err);
+          notification.error({
+            message: "Error",
+            description: "No Such Room",
+          });
         });
+      setJoinRoomId("");
       setIsJoinVisible(false);
     } else {
       history.push("/");

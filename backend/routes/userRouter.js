@@ -51,7 +51,9 @@ router
     Room.findOne({ roomid: req.body.roomid })
       .exec()
       .then((room) => {
-        if (!room) {
+        if (!room && !req.body.name) {
+          res.status(401).json({ message: "Room does not exist" });
+        } else if (!room) {
           var roomid = uuid4();
           var newRoom = new Room({
             roomid: roomid,
@@ -66,12 +68,10 @@ router
                 user
                   .save()
                   .then(() => {
-                    res
-                      .status(200)
-                      .json({
-                        message: "Room Created and Joined",
-                        room: newRoom,
-                      });
+                    res.status(200).json({
+                      message: "Room Created and Joined",
+                      room: newRoom,
+                    });
                   })
                   .catch((err) => {
                     res.status(500).json({ message: "Error in Joining Room" });
