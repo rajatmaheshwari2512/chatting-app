@@ -20,11 +20,13 @@ const ChatScreen = ({ socket, currentRoom, currentName }) => {
   useEffect(() => {
     if (socket && messages) {
       socket.on("message", ({ message, username, roomid }) => {
-        var temp = messages.slice(0);
-        var date = new Date();
-        var time = date.toLocaleTimeString();
-        temp.push({ sent_by: username, content: message, createdAt: time });
-        setMessages(temp);
+        if (roomid == currentRoom) {
+          var temp = messages.slice(0);
+          var date = new Date();
+          var time = date.toLocaleTimeString();
+          temp.push({ sent_by: username, content: message, createdAt: time });
+          setMessages(temp);
+        }
       });
     }
   }, [socket, messages]);
