@@ -32,7 +32,7 @@ app.use(cookieParser());
 app.use(cors());
 
 mongoose
-  .connect("mongodb://localhost:27017/chatting")
+  .connect(process.env.MONGODB_URI)
   .then((resp) => {
     console.log("connected");
   })

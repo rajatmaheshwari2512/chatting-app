@@ -5,6 +5,7 @@ var User = new Schema({
   username: {
     type: String,
     default: "",
+    unique: true,
   },
   password: {
     type: String,
