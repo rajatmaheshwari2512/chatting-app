@@ -103,6 +103,31 @@ router
         console.log(err);
         res.status(500).json({ message: "Error in Finding Room" });
       });
+  })
+  .post("/joinsomeone", (req, res) => {
+    const { roomid, username } = req.body;
+    User.findOne({ username: username })
+      .populate("rooms")
+      .exec()
+      .then((user) => {
+        if (!user) {
+          res.status(401).json({ message: "User does not exist" });
+        } else {
+          Room.findOne({ roomid: roomid })
+            .exec()
+            .then((room) => {
+              user.rooms.push(room);
+              console.log(user);
+              user.save().then(() => {
+                res.status(200).json({ message: "User Joined" });
+              });
+            });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json({ error: "Some Error Occured" });
+      });
   });
 
 module.exports = router;

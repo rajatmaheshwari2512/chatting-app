@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Input } from "antd";
+import { Row, Input, Button, Modal, notification } from "antd";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import "./ChatScreen.css";
@@ -8,6 +8,8 @@ const ChatScreen = ({ socket, currentRoom, currentName }) => {
   const history = useHistory();
   const [messages, setMessages] = useState(null);
   const [currentMessage, setCurrentMessage] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [username, setUsername] = useState("");
   const handleMessage = (e) => {
     if (currentMessage.length > 0) {
       const username = JSON.parse(localStorage.getItem("user")).username;
@@ -53,10 +55,63 @@ const ChatScreen = ({ socket, currentRoom, currentName }) => {
       history.push("/");
     }
   }, [currentRoom, history]);
+  const handleOpen = () => {
+    setIsModalVisible(true);
+  };
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+  const handleCreate = () => {
+    if (localStorage.getItem("token")) {
+      const data = {
+        roomid: currentRoom,
+        username: username,
+      };
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      };
+      axios
+        .post(
+          process.env.REACT_APP_API_URL + "/users/joinsomeone",
+          data,
+          config
+        )
+        .then((resp) => {
+          socket.emit("joinsomeoneelse", {
+            roomid: currentRoom,
+            username: username,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      setIsModalVisible(false);
+    } else {
+      history.push("/");
+      notification.error({
+        message: "Please Login First",
+        description: "You are not logged in",
+      });
+    }
+  };
   return (
     <>
       {currentRoom && currentName ? (
         <div style={{ height: "93vh" }}>
+          <Modal
+            title="Enter Username"
+            visible={isModalVisible}
+            onOk={handleCreate}
+            onCancel={handleCancel}
+          >
+            <Input
+              placeholder="Enter the username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </Modal>
           <Row style={{ marginTop: "5%" }}>
             <h1>
               <b>{currentName}</b>
@@ -69,10 +124,16 @@ const ChatScreen = ({ socket, currentRoom, currentName }) => {
               </b>
             </h3>
           </Row>
+          <Row>
+            <Button ghost shape="round" onClick={handleOpen}>
+              Add Someone
+            </Button>
+          </Row>
           <Row
             style={{
+              marginTop: "1%",
               width: "100%",
-              height: "75vh",
+              height: "70vh",
               overflowY: "scroll",
               display: "inline-block",
             }}

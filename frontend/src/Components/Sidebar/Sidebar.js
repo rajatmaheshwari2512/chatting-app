@@ -39,8 +39,16 @@ const Sidebar = ({
           setRooms(temp);
         }
       });
+      socket.on("joinsomeoneelse", ({ room }) => {
+        console.log(room);
+        if (rooms) {
+          var temp = rooms.slice(0);
+          temp.push(room);
+          setRooms(temp);
+        }
+      });
     }
-  }, [socket, currentRoom]);
+  }, [socket, currentRoom, rooms]);
   const handleClick = (e) => {
     var temp = rooms.slice(0);
     for (var i = 0; i < temp.length; i++) {

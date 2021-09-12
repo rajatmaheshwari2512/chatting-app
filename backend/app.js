@@ -71,6 +71,7 @@ io.on("connect", (socket) => {
         for (var i = 0; i < temp.length; i++) {
           rooms.push(temp[i].roomid);
         }
+        rooms.push(username);
         socket.join(rooms);
       });
   });
@@ -93,6 +94,14 @@ io.on("connect", (socket) => {
   });
   socket.on("room", ({ roomid }) => {
     socket.join(roomid);
+  });
+  socket.on("joinsomeoneelse", ({ roomid, username }) => {
+    console.log(roomid, username);
+    socket.join(username);
+    Room.findOne({ roomid: roomid }).then((room) => {
+      socket.broadcast.to(username).emit("joinsomeoneelse", { room: room });
+      socket.leave(username);
+    });
   });
 });
 
