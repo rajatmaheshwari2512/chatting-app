@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Row, Input, Button, Modal, notification } from "antd";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
@@ -6,6 +6,7 @@ import "./ChatScreen.css";
 
 const ChatScreen = ({ socket, currentRoom, currentName }) => {
   const history = useHistory();
+  const messagesEnd = useRef(null);
   const [messages, setMessages] = useState(null);
   const [currentMessage, setCurrentMessage] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -27,6 +28,7 @@ const ChatScreen = ({ socket, currentRoom, currentName }) => {
           var time = date.toLocaleTimeString();
           temp.push({ sent_by: username, content: message, createdAt: time });
           setMessages(temp);
+          messagesEnd.current.scrollIntoView({ behavior: "smooth" });
         }
       });
     }
@@ -136,7 +138,7 @@ const ChatScreen = ({ socket, currentRoom, currentName }) => {
             style={{
               marginTop: "1%",
               width: "100%",
-              height: "70vh",
+              height: "65vh",
               overflowY: "scroll",
               display: "inline-block",
             }}
@@ -190,6 +192,10 @@ const ChatScreen = ({ socket, currentRoom, currentName }) => {
                   </div>
                 );
               })}
+            <div
+              style={{ float: "left", clear: "both" }}
+              ref={messagesEnd}
+            ></div>
           </Row>
           <Row>
             <Input
