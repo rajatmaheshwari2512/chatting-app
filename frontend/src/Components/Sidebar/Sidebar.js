@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { Input, Row, Modal, notification } from "antd";
+import { Input, Row, Modal, notification, Button } from "antd";
 import axios from "axios";
 import "./Sidebar.css";
 
@@ -52,17 +52,15 @@ const Sidebar = ({
   const handleClick = (e) => {
     var temp = rooms.slice(0);
     for (var i = 0; i < temp.length; i++) {
-      if (
-        temp[i].roomid === e.target.className.split(" ")[1] &&
-        temp[i].colour
-      ) {
+      if (temp[i].roomid === e.target.id.split(" ")[1] && temp[i].colour) {
         temp[i].colour = null;
         break;
       }
     }
     setRooms(temp);
-    setCurrentRoom(e.target.className.split(" ")[1]);
+    setCurrentRoom(e.target.id.split(" ")[1]);
     setCurrentName(e.target.innerText);
+    localStorage.setItem("currentRoom", e.target.id.split(" ")[1]);
   };
   const handleCreate = () => {
     if (localStorage.getItem("token")) {
@@ -210,6 +208,7 @@ const Sidebar = ({
             <div
               onClick={handleClick}
               className={"room-names " + room.roomid}
+              id={"room-names " + room.roomid}
               key={room.roomid}
               style={{
                 backgroundColor: room.colour ? room.colour : "black",
@@ -218,11 +217,13 @@ const Sidebar = ({
                 borderTop: "1px solid gray",
                 textAlign: "center",
                 cursor: "pointer",
+                wordWrap: "break-word",
               }}
             >
               <h3
+                onClick={handleClick}
                 style={{ height: "100%", width: "100%" }}
-                className={"room-names " + room.roomid}
+                id={"room-names " + room.roomid}
               >
                 <b>{room.name}</b>
               </h3>

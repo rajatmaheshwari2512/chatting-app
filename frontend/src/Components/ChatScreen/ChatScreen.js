@@ -20,7 +20,8 @@ const ChatScreen = ({ socket, currentRoom, currentName }) => {
   useEffect(() => {
     if (socket && messages) {
       socket.on("message", ({ message, username, roomid }) => {
-        if (roomid == currentRoom) {
+        console.log(roomid, currentRoom);
+        if (roomid == localStorage.getItem("currentRoom")) {
           var temp = messages.slice(0);
           var date = new Date();
           var time = date.toLocaleTimeString();
