@@ -46,6 +46,7 @@ const Sidebar = ({
           temp.push(room);
           setRooms(temp);
         }
+        socket.emit("room", { roomid: room.roomid });
       });
     }
   }, [socket, currentRoom, rooms]);
